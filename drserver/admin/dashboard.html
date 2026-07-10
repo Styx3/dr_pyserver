@@ -1,0 +1,480 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DR:ADMIN - Dungeon Runners Server</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d0b0a;color:#d4c4a0;font-family:'Inter',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0d0b0a}::-webkit-scrollbar-thumb{background:#4a3a28;border-radius:3px}
+h1,h2,h3,.title{font-family:'Cinzel',serif}
+input,select{background:#1a1612;border:1px solid #3d2e1e;color:#d4c4a0;padding:8px 12px;border-radius:4px;font:13px 'Inter',sans-serif;outline:none}
+input:focus,select:focus{border-color:#c9a44a}
+button{font-family:'Inter',sans-serif;cursor:pointer;border:none;border-radius:4px;font-weight:600;transition:all .15s;font-size:12px}
+button:hover{filter:brightness(1.2)}button:active{transform:scale(.97)}button:disabled{opacity:.3;cursor:not-allowed;filter:none}
+.btn{padding:8px 16px;background:#2a2018;border:1px solid #4a3a28;color:#d4c4a0}
+.btn-gold{background:linear-gradient(180deg,#8b6914,#6b4f0e);border:1px solid #c9a44a;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.btn-green{background:linear-gradient(180deg,#1a5c2a,#0e3d1a);border:1px solid #2ecc40;color:#2ecc40}
+.btn-red{background:linear-gradient(180deg,#5c1a1a,#3d0e0e);border:1px solid #cc2e2e;color:#ff6b6b}
+.btn-amber{background:linear-gradient(180deg,#5c4a1a,#3d310e);border:1px solid #ccaa2e;color:#ffd666}
+.btn-sm{padding:4px 10px;font-size:11px}
+.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.card{background:linear-gradient(180deg,#1a1612ee,#141210ee);border:1px solid #3d2e1e;border-radius:6px;padding:16px;margin-bottom:12px;position:relative;backdrop-filter:blur(4px)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#6b4f0e44,transparent)}
+.ct{font:700 11px 'Cinzel',serif;color:#8b7340;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 12px;border-bottom:1px solid #3d2e1e;color:#8b7340;font:600 10px 'Cinzel',serif;text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid #1a161244;font-size:13px}
+tr.ck{cursor:pointer}tr.ck:hover{background:#1a161288}
+.si{padding:12px 20px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:10px;border-left:3px solid transparent;color:#8b7340;transition:.15s;font-weight:500}
+.si:hover{background:#1a161288;color:#d4c4a0}.si.on{background:linear-gradient(90deg,#1a1612,transparent);border-left-color:#c9a44a;color:#c9a44a;font-weight:700}
+.fx{display:flex;align-items:center;gap:12px}.fb{display:flex;align-items:center;justify-content:space-between}
+.gr{flex:1}.mb{margin-bottom:16px}.mt{margin-top:16px}
+.tg{font-size:11px;color:#6b5a3a;padding:0 4px}.mono{font-family:'Courier New',monospace}
+#toast{position:fixed;bottom:20px;right:20px;padding:12px 24px;border-radius:4px;font-size:13px;font-weight:600;display:none;z-index:999;color:#fff;border:1px solid}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}.pulse{animation:pulse 2s infinite}
+.hp-bar{background:#1a0a0a;border:1px solid #3d1e1e;border-radius:3px;height:18px;overflow:hidden;position:relative}
+.hp-bar .fill{height:100%;border-radius:2px;transition:width .4s}
+.hp-bar .txt{position:absolute;top:0;left:6px;font:700 10px/18px 'Courier New',monospace;color:#fff;text-shadow:0 1px 2px #000}
+.stat-gem{text-align:center;background:linear-gradient(180deg,#1a1612,#0d0b0a);border:1px solid #3d2e1e;border-radius:6px;padding:8px 4px}
+.stat-gem .lbl{font:600 9px 'Cinzel',serif;color:#6b5a3a;letter-spacing:1px;text-transform:uppercase}
+.stat-gem .val{font:800 20px 'Courier New',monospace}
+.player-card{background:linear-gradient(135deg,#1a1612,#0d0b0a);border:1px solid #3d2e1e;border-radius:8px;padding:14px;position:relative;overflow:hidden}
+.player-card::after{content:'';position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,#c9a44a08,transparent);pointer-events:none}
+.class-fighter{border-left:3px solid #cc4444}.class-mage{border-left:3px solid #4488ff}.class-ranger{border-left:3px solid #44cc44}
+.online-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+.online-dot.on{background:#2ecc40;box-shadow:0 0 6px #2ecc40}.online-dot.off{background:#4a3a28}
+.ico{width:40px;height:40px;vertical-align:middle;object-fit:contain}
+.ico-sm{width:24px;height:24px;vertical-align:middle;object-fit:contain}
+.ico-lg{width:56px;height:56px;vertical-align:middle;object-fit:contain}
+.stat-card{position:relative;overflow:hidden;padding:14px 18px}
+.stat-card .ic{position:absolute;top:6px;right:8px;width:52px;height:52px;opacity:.6;object-fit:contain}
+.item-icon{width:40px;height:48px;border:1px solid #3d2e1e;border-radius:4px;background:#0d0b0a;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.item-icon img{max-width:36px;max-height:44px;object-fit:contain}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div id="tooltip" style="display:none;position:fixed;background:linear-gradient(180deg,#1a1612ee,#0d0b0aee);border:1px solid #c9a44a;border-radius:6px;padding:12px;max-width:280px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.8);pointer-events:none"></div>
+<div style="display:flex;min-height:100vh">
+<div style="width:220px;background:linear-gradient(180deg,#1a0a08,#0d0604);border-right:1px solid #3d1e1e;flex-shrink:0;display:flex;flex-direction:column">
+<div style="padding:12px;border-bottom:1px solid #3d2e1e;text-align:center">
+<img src="/images/dr_logo.jpg" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" style="max-width:190px;max-height:90px;margin-bottom:4px;border-radius:4px">
+<div style="display:none">
+<div style="font:900 22px 'Cinzel',serif;color:#c9a44a;text-shadow:0 0 20px #c9a44a33">DUNGEON</div>
+<div style="font:700 14px 'Cinzel',serif;color:#8b7340;letter-spacing:4px">RUNNERS</div>
+</div>
+<div style="font:600 10px 'Inter',sans-serif;color:#4a3a28;margin-top:4px;letter-spacing:2px">ADMIN PANEL</div>
+<div style="font-size:10px;color:#6b5a3a;margin-top:6px" id="ul"></div>
+</div>
+<div style="padding:8px 0;flex:1">
+<div class="si on" onclick="go('ov')" id="t-ov"><img src="/images/Leadership_on.png" class="ico-sm" onerror="this.outerHTML='&#9876;'"> Dashboard</div>
+<div class="si" onclick="go('on')" id="t-on"><img src="/images/Avatar_on.png" class="ico-sm" onerror="this.outerHTML='&#128994;'"> Online Players</div>
+<div class="si" onclick="go('ch')" id="t-ch"><img src="/images/Charge_on.png" class="ico-sm" onerror="this.outerHTML='&#128101;'"> Characters</div>
+<div class="si" onclick="go('ac')" id="t-ac"><img src="/images/Toughness_on.png" class="ico-sm" onerror="this.outerHTML='&#128274;'"> Accounts</div>
+<div class="si" onclick="go('it')" id="t-it"><img src="/images/GoldStun_on.png" class="ico-sm" onerror="this.outerHTML='&#127890;'"> Item Catalog</div>
+<div class="si" onclick="go('cn')" id="t-cn"><img src="/images/slow_on.png" class="ico-sm" onerror="this.outerHTML='&#128279;'"> Connections</div>
+<div class="si" onclick="go('cf')" id="t-cf"><img src="/images/NCS_divinemastery_on.png" class="ico-sm" onerror="this.outerHTML='&#9881;'"> Server Config</div>
+<div class="si" onclick="go('lg')" id="t-lg"><img src="/images/NCS_FearMeleeAttack_on.png" class="ico-sm" onerror="this.outerHTML='&#128220;'"> Server Logs</div>
+<div style="border-top:1px solid #3d2e1e22;margin:4px 0"></div>
+<div class="si" onclick="go('msg')" id="t-msg"><img src="/images/Fire_Cone_on.png" class="ico-sm" onerror="this.outerHTML='&#128172;'"> Messaging</div>
+<div class="si" onclick="go('mod')" id="t-mod"><img src="/images/slow_on.png" class="ico-sm" onerror="this.outerHTML='&#128737;'"> Moderation</div>
+<div class="si" onclick="go('ev')" id="t-ev"><img src="/images/unstoppable_on.png" class="ico-sm" onerror="this.outerHTML='&#127775;'"> Events</div>
+<div class="si" onclick="go('cl')" id="t-cl"><img src="/images/NCS_IceMastery_on.png" class="ico-sm" onerror="this.outerHTML='&#128488;'"> Chat Log</div>
+<div class="si" onclick="go('al')" id="t-al"><img src="/images/MeleeAttackSpeed_Buff_on.png" class="ico-sm" onerror="this.outerHTML='&#128203;'"> Activity Log</div>
+<div class="si" onclick="go('lb')" id="t-lb"><img src="/images/Cavalry_Helm_icon.png" class="ico-sm" onerror="this.outerHTML='&#127942;'"> PvP Leaderboard</div>
+</div>
+<div style="padding:12px 16px;border-top:1px solid #3d2e1e">
+<div style="font:11px 'Courier New',monospace;color:#6b5a3a" id="ss">...</div>
+<div style="margin-top:8px"><button class="btn btn-sm" style="width:100%" onclick="document.cookie='dr_session=;path=/;expires=Thu,01 Jan 1970 00:00:00 GMT';location.href='/login'">Logout</button></div>
+</div>
+</div>
+<div style="flex:1;padding:24px;overflow-y:auto;max-height:100vh;background:linear-gradient(180deg,#1a0808,#120606,#0d0404)" id="C"></div>
+</div>
+<script>
+var tab='ov',cP=1,aP=1,cQ='',aQ='',iP=1,iQ='',viewingDetail=false,sendToChar=null,allChars=null;
+function $(id){return document.getElementById(id)}
+function showTip(el,html){var t=$('tooltip');t.innerHTML=html;t.style.display='block';var r=el.getBoundingClientRect();t.style.left=Math.min(r.right+8,window.innerWidth-290)+'px';t.style.top=Math.max(8,r.top-20)+'px'}
+function hideTip(){$('tooltip').style.display='none'}
+function toast(m,c){var t=$('toast');t.textContent=m;t.style.display='block';t.style.background=c==='red'?'#3d0e0e':'#0e3d1a';t.style.borderColor=c==='red'?'#cc2e2e':'#2ecc40';setTimeout(function(){t.style.display='none'},2500)}
+function F(p,o){o=o||{};return fetch(p,Object.assign({headers:{'Content-Type':'application/json'}},o)).then(function(r){if(r.status===401){location.href='/login';return{error:'auth'}}return r.json()}).catch(function(e){return{error:e.message}})}
+function go(t){viewingDetail=false;document.querySelectorAll('.si').forEach(function(e){e.classList.remove('on')});var el=$('t-'+t);if(el)el.classList.add('on');tab=t;R()}
+function B(t,bg,fg){return '<span class="badge" style="background:'+bg+';color:'+fg+';border:1px solid '+fg+'44">'+t+'</span>'}
+function classColor(c){return c==='Fighter'?'#cc4444':c==='Mage'?'#4488ff':c==='Ranger'?'#44cc44':'#c9a44a'}
+function classIcon(c){return c==='Fighter'?'/images/Charge_on.png':c==='Mage'?'/images/FlamePrison_on.png':c==='Ranger'?'/images/Flurry_on.png':'/images/Avatar_on.png'}
+function classImg(c,sz){sz=sz||'ico';return '<img src="'+classIcon(c)+'" class="'+sz+'" onerror="this.style.display=\'none\'">'}
+function statIcon(n){return{STR:'/images/1HMeleeMastery_on.png',AGI:'/images/Flurry_on.png',INT:'/images/NCS_IceMastery_on.png',END:'/images/Toughness_on.png'}[n]||''}
+function IC(s,c){return '<img src="'+s+'" class="'+(c||'ic')+'" onerror="this.style.display=\'none\'">'}
+function SC(l,v,c,i){return '<div class="card stat-card">'+IC(i,'ic')+'<div style="font:600 10px Cinzel,serif;color:#6b5a3a;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">'+l+'</div><div style="font:800 28px Courier New,monospace;color:'+c+';text-shadow:0 0 15px '+c+'33">'+(v!=null?v:'\u2014')+'</div></div>'}
+function HPBar(cur,max,color,label){var mx=max>256?max:max*256;var pct=mx>0?Math.min(100,cur/mx*100):0;return (label?'<div style="font:600 9px Cinzel,serif;color:#6b5a3a;margin-bottom:2px;letter-spacing:1px">'+label+'</div>':'')+'<div class="hp-bar"><div class="fill" style="width:'+pct+'%;background:'+color+'"></div><span class="txt">'+Math.floor(cur/256)+' / '+Math.floor(mx/256)+'</span></div><div style="margin-bottom:6px"></div>'}
+
+function R(){try{
+  if(tab==='ov')rO();else if(tab==='on')rOn();else if(tab==='ch')rC();else if(tab==='ac')rA();
+  else if(tab==='cn')rN();else if(tab==='cf')rF();else if(tab==='it')rI();else if(tab==='lg')rL();
+  else if(tab==='msg')rMsg();else if(tab==='mod')rMod();else if(tab==='ev')rEv();
+  else if(tab==='cl')rCl();else if(tab==='al')rAl();else if(tab==='lb')rLb();
+}catch(e){$('C').innerHTML='<div class="card" style="color:#cc2e2e;padding:30px"><b>Error:</b><pre style="margin-top:8px;white-space:pre-wrap;color:#d4c4a0">'+e.message+'</pre></div>'}}
+
+/* ═══ OVERVIEW ═══ */
+function rO(){
+  Promise.all([F('/api/status'),F('/api/stats')]).then(function(arr){
+    var st=arr[0],s=arr[1];if(st.error||s.error)return;
+    $('ss').innerHTML=st.running?'<span style="color:#2ecc40">&#9679; Online</span><br>'+(st.uptime||''):'<span style="color:#cc2e2e">&#9679; Offline</span>';
+    var h='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">';
+    /* Auth panel */
+    h+='<div class="card" style="border-color:'+(st.auth_up?'#2ecc4044':'#cc2e2e44')+'"><div class="fx" style="margin-bottom:10px"><div class="online-dot '+(st.auth_up?'on pulse':'off')+'"></div><span style="font:700 14px Cinzel,serif;color:'+(st.auth_up?'#2ecc40':'#cc2e2e')+'">Auth Server</span><div class="gr"></div>'+B(st.auth_up?'ONLINE':'OFFLINE',st.auth_up?'#0e3d1a':'#3d0e0e',st.auth_up?'#2ecc40':'#cc2e2e')+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;color:#8b7340"><div>IP: <span class="mono" style="color:#d4c4a0">'+(st.auth_ip||'0.0.0.0')+'</span></div><div>Port: <span class="mono" style="color:#d4c4a0">'+(st.auth_port||2110)+'</span></div></div></div>';
+    /* Game panel */
+    h+='<div class="card" style="border-color:'+(st.game_up?'#2ecc4044':'#cc2e2e44')+'"><div class="fx" style="margin-bottom:10px"><div class="online-dot '+(st.game_up?'on pulse':'off')+'"></div><span style="font:700 14px Cinzel,serif;color:'+(st.game_up?'#2ecc40':'#cc2e2e')+'">Game Server</span><div class="gr"></div>'+B(st.game_up?'ONLINE':'OFFLINE',st.game_up?'#0e3d1a':'#3d0e0e',st.game_up?'#2ecc40':'#cc2e2e')+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;color:#8b7340"><div>IP: <span class="mono" style="color:#d4c4a0">'+(st.game_ip||'0.0.0.0')+'</span></div><div>Port: <span class="mono" style="color:#d4c4a0">'+(st.game_port||2603)+'</span></div><div>Players: <span style="color:#2ecc40;font-weight:700">'+(st.connections||0)+'</span></div><div>PID: <span class="mono" style="color:#d4c4a0">'+(st.pid||'\u2014')+'</span></div></div></div></div>';
+    h+='<div class="fb mb" style="flex-wrap:wrap;gap:12px"><span style="font:900 16px Cinzel,serif;color:#c9a44a">'+(st.server_name||'Dungeon Runners')+'</span>';
+    if(st.uptime)h+='<span class="tg">&#9203; '+st.uptime+'</span>';
+    h+='<div class="gr"></div><span class="tg" style="color:#6b5a3a">PID: '+(st.pid||'?')+' | DB: '+(st.db_size_mb||'?')+' MB</span></div>';
+    h+='<div class="card"><div class="ct">Admin Panel Info</div><div class="fx" style="gap:8px"><span class="tg">Server is managed in-process. Stop with Ctrl+C.</span><span class="gr"></span><button class="btn btn-sm" onclick="location.reload()">&#10227; Refresh</button></div></div>';
+    h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:20px">';
+    h+=SC('Online',st.connections||0,'#2ecc40','/images/Leadership_on.png');
+    h+=SC('Accounts',s.accounts,'#c9a44a','/images/Avatar_on.png');
+    h+=SC('Characters',s.characters,'#a78bfa','/images/Charge_on.png');
+    h+=SC('Members',s.members,'#ffd666','/images/NCS_divinemastery_on.png');
+    h+=SC('Avg Level',s.avg_level,'#44cc44','/images/MeleeAttackSpeed_Buff_on.png');
+    h+=SC('Max Level',s.max_level,'#ff8844','/images/unstoppable_on.png');
+    h+=SC('Total Gold',(s.total_gold||0).toLocaleString(),'#ffd666','/images/GoldStun_on.png');
+    h+=SC('Quests',s.quests_done,'#a78bfa','/images/Fire_Cone_on.png');
+    h+=SC('Banned',s.banned,'#cc2e2e','/images/slow_on.png');
+    h+=SC('Admins',s.admins,'#cc4444','/images/Toughness_on.png');
+    h+='</div>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">';
+    h+='<div class="card"><div class="ct">Class Distribution</div>';var mx=1;(s.classes||[]).forEach(function(c){if(c.n>mx)mx=c.n});
+    (s.classes||[]).forEach(function(c){var cc=classColor(c.cls);h+='<div class="fb" style="margin-bottom:8px">'+classImg(c.cls,'ico-sm')+' <span style="color:'+cc+';font-weight:600;margin-left:6px">'+c.cls+'</span><div class="fx" style="gap:8px"><div style="width:120px;height:8px;background:#0d0b0a;border:1px solid #3d2e1e;border-radius:4px;overflow:hidden"><div style="width:'+(c.n/mx*100)+'%;height:100%;background:'+cc+'"></div></div><span class="mono" style="font-size:12px;color:'+cc+'">'+c.n+'</span></div></div>'});
+    h+='</div><div class="card"><div class="ct">Top Characters</div>';
+    (s.highest||[]).forEach(function(c,i){h+='<div class="fb" style="padding:5px 0;border-bottom:1px solid #1a161244">'+classImg(c.class_name,'ico-sm')+' <span style="margin-left:4px"><span class="mono" style="color:#4a3a28;font-size:11px">'+(i+1)+'.</span> <span style="color:#c9a44a;font-weight:600">'+c.name+'</span></span><div class="gr"></div><span style="font:700 14px Courier New,monospace;color:#ffd666">Lv '+c.level+'</span></div>'});
+    h+='</div></div>';$('C').innerHTML=h;
+  });
+}
+function srv(a){if((a==='stop'||a==='restart')&&!confirm(a+' the server?'))return;F('/api/server/'+a,{method:'POST'}).then(function(r){toast(r.ok?'Server '+a+' OK':(r.error||'Failed'),r.ok?'green':'red');setTimeout(R,2000)})}
+function sched(a,m){if(!confirm('Schedule '+a+' in '+m+'m?'))return;F('/api/schedule',{method:'POST',body:JSON.stringify({action:a,minutes:m})}).then(function(){toast(a+' scheduled');R()})}
+function csched(){F('/api/schedule/cancel',{method:'POST'}).then(function(){toast('Cancelled');R()})}
+
+/* ═══ ONLINE PLAYERS ═══ */
+function rOn(){F('/api/online').then(function(d){
+  var h='<div class="fb mb"><div class="fx" style="gap:8px"><img src="/images/Leadership_on.png" class="ico"> <span style="font:900 20px Cinzel,serif;color:#c9a44a">Online Players</span>'+B('Game: '+d.online_count,'#0e3d1a','#2ecc40')+B('Auth: '+(d.auth_connections||0),'#1a2438','#4488ff')+'</div></div>';
+  if(d.online_count===0){h+='<div class="card" style="text-align:center;padding:40px;color:#6b5a3a"><img src="/images/slow_on.png" class="ico-lg" style="opacity:.5;margin-bottom:12px"><br><div style="font:700 16px Cinzel,serif">No adventurers online</div></div>';}
+  else{h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px">';
+    (d.players||[]).forEach(function(p){var cc=classColor(p.class_name);
+      h+='<div class="player-card class-'+p.class_name.toLowerCase()+'"><div class="fx" style="margin-bottom:10px">'+classImg(p.class_name,'ico')+' <div style="font:700 16px Cinzel,serif;color:#c9a44a;margin-left:4px">'+p.name+'</div> '+B(p.class_name,cc+'22',cc)+'<div class="gr"></div><span style="font:800 16px Courier New,monospace;color:#ffd666">Lv '+p.level+'</span></div>';
+      h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;margin-bottom:10px;color:#8b7340"><div>&#128100; '+p.account_name+'</div><div>&#127759; '+(p.current_zone||'?')+'</div><div>&#128176; <span style="color:#ffd666">'+(p.gold||0).toLocaleString()+' g</span></div><div>&#11088; '+p.experience+' XP</div></div>';
+      h+=HPBar(p.current_hp||0,p.max_hp||1,'linear-gradient(90deg,#8b1a1a,#2ecc40)','HEALTH');
+      h+=HPBar(p.current_mana||0,p.max_mana||1,'linear-gradient(90deg,#1a3d8b,#22d3ee)','MANA');
+      h+='<div style="margin-top:8px;text-align:right"><button class="btn btn-sm" onclick="cD('+p.id+')">View Details</button></div></div>';
+    });h+='</div>';}
+  h+='<div class="tg mt">Auto-refreshes every 5s</div>';$('C').innerHTML=h;
+});}
+
+/* ═══ CHARACTERS ═══ */
+function rC(){F('/api/characters?page='+cP+'&per_page=40&search='+encodeURIComponent(cQ)).then(function(d){if(d.error)return;
+  var h='<div class="fx mb"><input placeholder="Search..." value="'+cQ+'" onchange="cQ=this.value;cP=1;R()" style="width:260px"><span class="tg">'+d.total+'</span><div class="gr"></div><button class="btn btn-sm" onclick="cP=Math.max(1,cP-1);R()" '+(cP<=1?'disabled':'')+'>&laquo;</button><span class="tg">Page '+d.page+'</span><button class="btn btn-sm" onclick="cP++;R()" '+((d.rows||[]).length<40?'disabled':'')+'>&raquo;</button></div>';
+  h+='<div class="card" style="padding:0;overflow-x:auto"><table><thead><tr><th></th><th>ID</th><th>Name</th><th>Class</th><th>Level</th><th>Gold</th><th>Zone</th><th>Account</th><th></th></tr></thead><tbody>';
+  (d.rows||[]).forEach(function(r){var cc=classColor(r.class_name);
+    h+='<tr class="ck"><td>'+classImg(r.class_name,'ico-sm')+'</td><td class="mono" style="font-size:11px;color:#6b5a3a">'+r.id+'</td><td><span style="color:#c9a44a;font-weight:700">'+r.name+'</span></td><td>'+B(r.class_name,cc+'22',cc)+'</td><td style="font:700 14px Courier New,monospace;color:#ffd666">'+r.level+'</td><td style="color:#ffd666;font:600 12px Courier New,monospace">'+(r.gold||0).toLocaleString()+'</td><td style="font-size:12px">'+(r.current_zone||'\u2014')+'</td><td>'+r.account_name+'</td><td><button class="btn btn-gold btn-sm" onclick="cD('+r.id+')">View</button></td></tr>';
+  });h+='</tbody></table></div>';$('C').innerHTML=h;
+});}
+
+function cD(id){viewingDetail=true;F('/api/characters/'+id).then(function(c){if(c.error)return;var cc=classColor(c.class_name);
+  var h='<button class="btn btn-sm mb" onclick="viewingDetail=false;R()">&laquo; Back</button>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div>';
+  h+='<div class="card"><div class="fx" style="margin-bottom:16px">'+classImg(c.class_name,'ico-lg')+' <div style="margin-left:8px"><div style="font:900 26px Cinzel,serif;color:#c9a44a">'+c.name+'</div><div>'+B(c.class_name,cc+'22',cc)+'<span class="tg">ID: '+c.id+'</span></div></div></div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;margin-bottom:16px"><div><span style="color:#6b5a3a">Account:</span> '+c.account_name+'</div><div><span style="color:#6b5a3a">Level:</span> <span style="color:#ffd666;font:800 16px Courier New,monospace">'+c.level+'</span></div><div><span style="color:#6b5a3a">XP:</span> <span class="mono">'+c.experience+'</span></div><div><span style="color:#6b5a3a">Gold:</span> <span style="color:#ffd666;font-weight:600">'+(c.gold||0).toLocaleString()+'</span></div><div><span style="color:#6b5a3a">Zone:</span> '+(c.current_zone||'\u2014')+'</div></div>';
+  h+=HPBar(c.current_hp||0,c.max_hp||1,'linear-gradient(90deg,#8b1a1a,#2ecc40)','HEALTH');
+  h+=HPBar(c.current_mana||0,c.max_mana||1,'linear-gradient(90deg,#1a3d8b,#22d3ee)','MANA');
+  h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px">';
+  [['STR',c.stat_strength,'#cc4444'],['AGI',c.stat_agility,'#44cc44'],['INT',c.stat_intellect,'#4488ff'],['END',c.stat_endurance,'#ff8844']].forEach(function(s){h+='<div class="stat-gem"><img src="'+statIcon(s[0])+'" class="ico-sm" onerror="this.style.display=\'none\'"><div class="lbl">'+s[0]+'</div><div class="val" style="color:'+s[2]+'">'+(s[1]||0)+'</div></div>'});
+  h+='</div></div>';
+  h+='<div class="card"><div class="ct">Quick Edit</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"><div><label style="font-size:10px;color:#6b5a3a">Level</label><input type="number" id="el" value="'+c.level+'" style="width:100%"><button class="btn btn-green btn-sm mt" onclick="setLvl('+c.id+')">&#11088; Set Level</button></div><div><label style="font-size:10px;color:#6b5a3a">Gold</label><input type="number" id="eg" value="'+c.gold+'" style="width:100%"><button class="btn btn-amber btn-sm mt" onclick="setGold('+c.id+')">&#128176; Set Gold</button></div><div><label style="font-size:10px;color:#6b5a3a">XP</label><input type="number" id="ex" value="'+c.experience+'" style="width:100%"><button class="btn btn-gold btn-sm mt" onclick="setXP('+c.id+')">&#128190; Set XP</button></div></div>';
+  h+='<div class="fx mt" style="gap:8px;flex-wrap:wrap"><button class="btn btn-green btn-sm" onclick="sendToChar={id:'+c.id+',name:\''+c.name.replace(/'/g,"\\'")+'\',level:'+c.level+',class_name:\''+c.class_name+'\'};go(\'it\')">&#127873; Send Item</button><button class="btn btn-red btn-sm" onclick="if(confirm(\'DELETE '+c.name+'?\'))dC('+c.id+')">&#128465; Delete</button></div></div></div>';
+  h+='<div>';
+  /* Equipment */
+  h+='<div class="card"><div class="ct"><img src="/images/Weapon_Icon_Shield_Tower_Wood.png" class="ico-sm"> Equipment</div>';
+  var slotIco={weapon:'/images/1HMeleeMastery_on.png',armor:'/images/Toughness_on.png',helmet:'/images/Cavalry_Helm_icon.png',gloves:'/images/Splint_07_Gloves_icon.png',boots:'/images/Splint_07_Boots_icon.png',shoulders:'/images/Splint_07_Shoulder_icon.png',shield:'/images/Shield_Standard_Blue.png',ring1:'/images/Inventory_Icon_Ring_01.png',ring2:'/images/Inventory_Icon_Ring_03.png',amulet:'/images/Inventory_Icon_Ring_06.png'};
+  (c.equipment||[]).forEach(function(e){var nm=e.gc_class?e.gc_class.split('.').pop():'(empty)';var si=slotIco[e.slot]||'';
+    h+='<div class="fb" style="padding:4px 0;border-bottom:1px solid #1a161244;font-size:12px">';if(si)h+='<img src="'+si+'" class="ico-sm" style="margin-right:4px" onerror="this.style.display=\'none\'">';
+    h+='<span style="color:#6b5a3a;width:70px;text-transform:capitalize">'+e.slot+'</span><span style="flex:1;color:'+(e.gc_class?'#d4c4a0':'#3d2e1e')+'">'+nm+'</span></div>'});
+  h+='</div>';
+  /* Skills */
+  h+='<div class="card"><div class="ct"><img src="/images/FlamePrison_on.png" class="ico-sm"> Skills ('+(c.skills||[]).length+')</div><div style="max-height:180px;overflow-y:auto">';
+  (c.skills||[]).forEach(function(s){h+='<div class="fb" style="padding:3px 0;font-size:12px"><span>'+s.skill_gc_class.split('.').pop()+'</span>'+B('Lv '+s.level,'#c9a44a22','#c9a44a')+'</div>'});
+  h+='</div></div>';
+  /* Inventory */
+  h+='<div class="card"><div class="ct">Inventory ('+(c.inventory||[]).length+')</div><div style="max-height:180px;overflow-y:auto">';
+  (c.inventory||[]).forEach(function(it){h+='<div class="fb" style="padding:2px 0;font-size:12px"><span style="color:#d4c4a0">'+it.gc_class.split('.').pop()+'</span><span class="tg">'+(it.count>1?'x'+it.count+' ':'')+'</span></div>'});
+  h+='</div></div></div></div>';$('C').innerHTML=h;
+});}
+function sC(id){var b={level:+$('el').value,gold:+$('eg').value,experience:+$('ex').value};F('/api/characters/'+id,{method:'PUT',body:JSON.stringify(b)}).then(function(r){toast(r.ok?'Saved!':'Failed',r.ok?'green':'red');if(r.ok)cD(id)})}
+function grantGold(id,name){var amt=prompt('Grant how much gold to '+name+'?','10000');if(!amt)return;F('/api/gold/grant',{method:'POST',body:JSON.stringify({character_id:id,amount:parseInt(amt)})}).then(function(r){toast(r.ok?'Granted '+amt+' gold to '+name+' ('+r.new_gold+' total)':(r.error||'Failed'),r.ok?'green':'red');if(r.ok)cD(id)})}
+function setLvl(id){var v=$('el').value;F('/api/characters/'+id,{method:'PUT',body:JSON.stringify({level:parseInt(v)})}).then(function(r){toast(r.ok?'Level set to '+v+' (live!)':'Failed',r.ok?'green':'red');if(r.ok)cD(id)})}
+function setGold(id){var v=$('eg').value;F('/api/characters/'+id,{method:'PUT',body:JSON.stringify({gold:parseInt(v)})}).then(function(r){toast(r.ok?'Gold set (live!)':'Failed',r.ok?'green':'red');if(r.ok)cD(id)})}
+function setXP(id){var v=$('ex').value;F('/api/xp/set',{method:'POST',body:JSON.stringify({character_id:id,xp:parseInt(v)})}).then(function(r){toast(r.ok?'XP set to '+v:'Failed: '+(r.error||''),r.ok?'green':'red');if(r.ok)cD(id)})}
+function dC(id){F('/api/characters/'+id,{method:'DELETE'}).then(function(r){toast(r.ok?'Deleted':'Failed',r.ok?'green':'red');if(r.ok){viewingDetail=false;R()}})}
+
+/* ═══ ACCOUNTS ═══ */
+function rA(){F('/api/accounts?page='+aP+'&per_page=40&search='+encodeURIComponent(aQ)).then(function(d){if(d.error)return;
+  var h='<div class="fx mb"><input placeholder="Search accounts..." value="'+aQ+'" onchange="aQ=this.value;aP=1;R()" style="width:260px"><span class="tg">'+d.total+'</span><div class="gr"></div><button class="btn btn-gold btn-sm" onclick="document.getElementById(\'ca-box\').style.display=document.getElementById(\'ca-box\').style.display===\'none\'?\'block\':\'none\'">+ Create Account</button> <button class="btn btn-sm" onclick="aP=Math.max(1,aP-1);R()" '+(aP<=1?'disabled':'')+'>&laquo;</button><span class="tg">Page '+d.page+'</span><button class="btn btn-sm" onclick="aP++;R()" '+((d.rows||[]).length<40?'disabled':'')+'>&raquo;</button></div>';
+  h+='<div id="ca-box" class="card" style="display:none;border-color:#c9a44a"><div class="ct">Create New Account</div><div class="fx" style="gap:8px;flex-wrap:wrap"><input id="ca-user" placeholder="Username" style="width:160px"><input id="ca-pass" placeholder="Password" type="password" style="width:160px"><label style="font-size:12px;color:#8b7340"><input type="checkbox" id="ca-member"> Member</label><label style="font-size:12px;color:#8b7340"><input type="checkbox" id="ca-admin"> Admin</label><button class="btn btn-gold" onclick="createAcct()">Create</button></div></div>';
+  h+='<div class="card" style="padding:0;overflow-x:auto"><table><thead><tr><th>ID</th><th>Username</th><th>Chars</th><th>Member</th><th>Admin</th><th>Status</th><th>Last Login</th></tr></thead><tbody>';
+  (d.rows||[]).forEach(function(r){h+='<tr><td class="mono" style="font-size:12px;color:#6b5a3a">'+r.id+'</td><td><span style="color:#c9a44a;font-weight:600">'+r.username+'</span></td><td class="mono">'+r.char_count+'</td><td><span style="cursor:pointer" onclick="tA('+r.id+',\'is_member\','+r.is_member+')">'+(r.is_member?B('YES','#ffd66622','#ffd666'):B('NO','#3d2e1e','#6b5a3a'))+'</span></td><td><span style="cursor:pointer" onclick="tA('+r.id+',\'is_admin\','+r.is_admin+')">'+(r.is_admin?B('YES','#cc2e2e22','#cc2e2e'):B('NO','#3d2e1e','#6b5a3a'))+'</span></td><td><span style="cursor:pointer" onclick="tA('+r.id+',\'is_banned\','+r.is_banned+')">'+(r.is_banned?B('BANNED','#cc2e2e22','#cc2e2e'):B('OK','#2ecc4022','#2ecc40'))+'</span></td><td class="mono" style="font-size:11px;color:#6b5a3a">'+(r.last_login||'\u2014')+'</td></tr>'});
+  h+='</tbody></table></div>';$('C').innerHTML=h;
+});}
+function tA(id,f,cur){var b={};b[f]=cur?0:1;F('/api/accounts/'+id,{method:'PUT',body:JSON.stringify(b)}).then(function(r){toast(r.ok?f+' toggled':'Failed',r.ok?'green':'red');if(r.ok)R()})}
+function createAcct(){var u=$('ca-user').value,p=$('ca-pass').value;if(!u||!p){toast('Username and password required','red');return}
+  F('/api/accounts/create',{method:'POST',body:JSON.stringify({username:u,password:p,is_member:$('ca-member').checked?1:0,is_admin:$('ca-admin').checked?1:0})}).then(function(r){toast(r.ok?'Account created: '+r.username:'Failed: '+(r.error||''),r.ok?'green':'red');if(r.ok){$('ca-user').value='';$('ca-pass').value='';R()}})}
+
+/* ═══ CONNECTIONS ═══ */
+function rN(){F('/api/connections').then(function(d){
+  var h='<div class="ct mb">Active TCP Connections</div><div class="card" style="padding:0"><table><thead><tr><th>Remote IP</th><th>Address</th><th>PID</th></tr></thead><tbody>';
+  (d.connections||[]).forEach(function(c){h+='<tr><td class="mono" style="color:#c9a44a">'+c.ip+'</td><td class="mono" style="font-size:12px;color:#6b5a3a">'+c.remote+'</td><td>'+(c.pid||'\u2014')+'</td></tr>'});
+  if(!(d.connections||[]).length)h+='<tr><td colspan="3" style="text-align:center;padding:30px;color:#6b5a3a">No connections</td></tr>';
+  h+='</tbody></table></div>';$('C').innerHTML=h;
+});}
+
+/* ═══ ITEM CATALOG ═══ */
+function rI(){
+  // Load character list for send dropdown
+  if(!allChars){F('/api/characters?per_page=200').then(function(d){allChars=d.rows||[];rI()});return}
+  F('/api/items?page='+iP+'&per_page=30&search='+encodeURIComponent(iQ)).then(function(d){
+    if(d.error){$('C').innerHTML='<div class="card" style="color:#cc2e2e;padding:30px">'+d.error+'</div>';return}
+    var h='<div class="fb mb"><div class="fx"><img src="/images/GoldStun_on.png" class="ico" onerror="this.style.display=\'none\'"> <span style="font:900 20px Cinzel,serif;color:#c9a44a">Item Catalog</span> <span class="tg">'+d.total+' items</span></div></div>';
+
+    /* Send To section */
+    if(sendToChar){
+      h+='<div class="card" style="border-color:#2ecc40"><div class="fx" style="gap:12px">&#127873; <span style="color:#2ecc40;font-weight:700">Sending to: <span style="font:700 16px Cinzel,serif;color:#c9a44a">'+sendToChar.name+'</span> <span class="tg">(ID '+sendToChar.id+', Lv '+(sendToChar.level||'?')+' '+(sendToChar.class_name||'')+')</span></span><div class="gr"></div><button class="btn btn-red btn-sm" onclick="sendToChar=null;rI()">Cancel</button></div></div>';
+    }else{
+      h+='<div class="card"><div class="ct">&#127873; Send Item to Character</div>';
+      h+='<div class="fx" style="gap:8px;flex-wrap:wrap"><select id="char-sel" style="width:300px"><option value="">-- Select Character --</option>';
+      allChars.forEach(function(ch){h+='<option value="'+ch.id+'">'+ch.name+' (ID:'+ch.id+' Lv'+ch.level+' '+ch.class_name+' - '+ch.account_name+')</option>'});
+      h+='</select><button class="btn btn-gold btn-sm" onclick="var s=$(\'char-sel\');var id=s.value;if(!id)return;var ch=allChars.find(function(c){return c.id==id});if(ch){sendToChar={id:ch.id,name:ch.name,level:ch.level,class_name:ch.class_name};rI()}">Select</button></div></div>';
+    }
+
+    /* Search */
+    h+='<div class="fx mb"><input placeholder="Search items..." value="'+iQ+'" onchange="iQ=this.value;iP=1;rI()" style="width:300px"><div class="gr"></div><button class="btn btn-sm" onclick="iP=Math.max(1,iP-1);rI()" '+(iP<=1?'disabled':'')+'>&laquo;</button><span class="tg">Page '+d.page+'</span><button class="btn btn-sm" onclick="iP++;rI()" '+((d.rows||[]).length<30?'disabled':'')+'>&raquo;</button></div>';
+
+    /* Item table */
+    h+='<div class="card" style="padding:0;overflow-x:auto"><table><thead><tr><th></th><th>Name</th><th>Type</th><th>Rarity</th><th>Stats</th><th>Gold</th><th></th></tr></thead><tbody>';
+    var rarC={Normal:'#8b7340',Superior:'#2ecc40',Magical:'#4488ff',Rare:'#a78bfa',Unique:'#ff8844',Mythic:'#ffd666',Quest:'#cc2e2e'};
+    (d.rows||[]).forEach(function(r){
+      var rc=rarC[r.rarity]||'#8b7340';
+      var ic=r.icon?'/images/'+r.icon+'.png':'/images/Mystery_Shield_Icon.png';
+      var itype=r.item_type||r.weapon_class||'';
+      /* Tooltip */
+      var tip='<div style="font:700 14px Cinzel,serif;color:'+rc+'">'+r.name+'</div>';
+      if(r.description)tip+='<div style="font-size:11px;color:#d4c4a0;margin:4px 0;font-style:italic">'+r.description+'</div>';
+      if(itype)tip+='<div style="font-size:11px;color:#8b7340">Type: '+itype+'</div>';
+      if(r.damage>0)tip+='<div style="color:#cc4444;font-size:12px">Damage: '+r.damage+'</div>';
+      if(r.defense>0)tip+='<div style="color:#4488ff;font-size:12px">Defense: '+r.defense+'</div>';
+      tip+='<div style="color:#ffd666;font-size:11px">Gold: '+(r.gold_value||0)+'</div>';
+      if(r.stats&&r.stats.length){tip+='<div style="margin-top:4px;border-top:1px solid #3d2e1e;padding-top:4px">';r.stats.forEach(function(s){tip+='<div style="color:#2ecc40;font-size:11px">+ '+s.attribute.replace(/_/g,' ')+'</div>'});tip+='</div>'}
+      var te=tip.replace(/'/g,"&#39;").replace(/"/g,"&quot;");
+      h+='<tr style="border-left:2px solid '+(rarC[r.rarity]||'#3d2e1e')+'44"><td><div class="item-icon" onmouseover="showTip(this,\''+te+'\')" onmouseout="hideTip()"><img src="'+ic+'" onerror="this.src=\'/images/Mystery_Shield_Icon.png\'"></div></td>';
+      h+='<td><span style="color:'+rc+';font-weight:600;cursor:help" onmouseover="showTip(this,\''+te+'\')" onmouseout="hideTip()">'+r.name+'</span></td>';
+      h+='<td style="font-size:12px;color:#8b7340">'+itype+'</td>';
+      h+='<td>'+B(r.rarity||'?',rc+'22',rc)+'</td>';
+      h+='<td style="font-size:11px">';
+      if(r.damage>0)h+='<span style="color:#cc4444">'+r.damage+' dmg</span> ';
+      if(r.stats&&r.stats.length)h+='<span style="color:#2ecc40">+'+r.stats.length+' mods</span>';
+      h+='</td><td style="color:#ffd666;font:600 12px Courier New,monospace">'+(r.gold_value||0)+'</td><td>';
+      if(sendToChar)h+='<button class="btn btn-green btn-sm" onclick="sendItem(\''+r.gc_type.replace(/'/g,"\\'")+'\',\''+r.name.replace(/'/g,"\\'")+'\')">Send</button>';
+      else h+='<button class="btn btn-sm" onclick="promptSend(\''+r.gc_type.replace(/'/g,"\\'")+'\',\''+r.name.replace(/'/g,"\\'")+'\')">Send to...</button>';
+      h+='</td></tr>';
+    });
+    h+='</tbody></table></div>';$('C').innerHTML=h;
+  });
+}
+function promptSend(gc,name){var cid=prompt('Character ID to send "'+name+'" to:');if(!cid)return;var n=prompt('How many?','1');if(!n)return;F('/api/items/send',{method:'POST',body:JSON.stringify({character_id:parseInt(cid),gc_class:gc,count:parseInt(n)})}).then(function(r){toast(r.ok?'Sent '+n+'x '+name+' to '+r.character:(r.error||'Failed'),r.ok?'green':'red')})}
+function sendItem(gc,name){if(!sendToChar)return;var n=prompt('How many "'+name+'" to '+sendToChar.name+'?','1');if(!n)return;F('/api/items/send',{method:'POST',body:JSON.stringify({character_id:sendToChar.id,gc_class:gc,count:parseInt(n)})}).then(function(r){toast(r.ok?'Sent '+n+'x '+name+' to '+r.character:(r.error||'Failed'),r.ok?'green':'red')})}
+
+/* ═══ CONFIG ═══ */
+var cfgSections=[{id:'motd',title:'Welcome & MOTD',keys:['welcomeMessage','motd','welcomeColor','motdColor','announceColor','announceEffect']},{id:'net',title:'Network',keys:['authIP','authPort','gameIP','gamePort','queuePort']},{id:'srv',title:'Server',keys:['serverName','maxPlayers','startZone','enableDebugLog','logCategories','maxLevel']},{id:'diff',title:'Difficulty',keys:['defaultDifficulty','difficultyHPMult_0','difficultyHPMult_1','difficultyHPMult_2','difficultyHPMult_3','difficultyXPMult_0','difficultyXPMult_1','difficultyXPMult_2','difficultyXPMult_3']},{id:'mem',title:'Membership',keys:['defaultMembership','freePlayerXPMultiplier']},{id:'mset',title:'Member Settings',prefix:'member_'},{id:'fset',title:'Free Settings',prefix:'free_'},{id:'combat',title:'Combat',keys:['heroStunMod','heroMissChance','heroMissDamageMod','heroStunChance','monsterMissChance','monsterMissDamageMod','monsterStunChance']},{id:'merch',title:'Merchant',keys:['merchantLevelWindow','goldCostToCreatePosse','minLevelToCreatePosse']},{id:'misc',title:'Misc',keys:['reSpecTime','freePlayerRequiredKingsCoinMult','posseInvitationTimeout','itemSoulBoundTime']}];
+var cfgOpen={};
+function rF(){F('/api/config').then(function(d){
+  if(d.error){$('C').innerHTML='<div class="card" style="color:#cc2e2e">Config error: '+d.error+'</div>';return}
+  var cfg=d.config||{};var allKeys=Object.keys(cfg);var usedKeys={};
+  if(allKeys.length===0){$('C').innerHTML='<div class="card" style="color:#cc2e2e">Config returned 0 keys. Check server.cfg</div>';return}
+  var h='<div style="font:900 22px Cinzel,serif;color:#c9a44a;margin-bottom:16px">Server Configuration ('+allKeys.length+' settings)</div>';
+  cfgSections.forEach(function(sec){var keys=[];
+    if(sec.keys)keys=sec.keys.filter(function(k){return cfg.hasOwnProperty(k)});
+    if(sec.prefix)allKeys.forEach(function(k){if(k.indexOf(sec.prefix)===0)keys.push(k)});
+    keys.forEach(function(k){usedKeys[k]=true});if(!keys.length)return;
+    var isOpen=cfgOpen[sec.id]===true;
+    h+='<div class="card" style="padding:0"><div onclick="cfgOpen[\''+sec.id+'\']='+(!isOpen)+';rF()" style="padding:14px 18px;cursor:pointer;display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,#1a161288,transparent)"><span style="color:#6b5a3a">'+(isOpen?'&#9660;':'&#9654;')+'</span><span style="font:700 13px Cinzel,serif;color:#c9a44a;flex:1">'+sec.title+'</span>'+B(keys.length+'','#3d2e1e','#8b7340')+'</div>';
+    if(isOpen){h+='<div style="padding:4px 18px 14px;border-top:1px solid #3d2e1e22">';
+      keys.forEach(function(k){var v=(cfg[k]||'').replace(/"/g,'&quot;');var label=sec.prefix?k.replace(sec.prefix,''):k;
+        h+='<div style="display:flex;align-items:center;padding:5px 0;border-bottom:1px solid #1a161222;gap:8px"><label style="font-size:12px;color:#8b7340;width:200px;flex-shrink:0">'+label+'</label><input id="cfg-'+k+'" value="'+v+'" style="flex:1;font-size:12px"><button class="btn btn-gold btn-sm" onclick="sCfg(\''+k+'\')">Save</button></div>'});
+      h+='</div>'}h+='</div>'});
+  $('C').innerHTML=h;
+});}
+function sCfg(k){toast('Config editing is read-only. Edit config.yaml and restart.', 'red')}
+
+/* ═══ LOGS ═══ */
+var logInt=null;
+function rL(){$('C').innerHTML='<div class="ct mb">Server Logs</div><div id="lo" style="background:#0a0908;border:1px solid #3d2e1e;border-radius:6px;padding:12px;height:calc(100vh - 140px);overflow-y:auto;font:11px/1.6 Courier New,monospace">Loading...</div>';
+  function rl(){F('/api/logs?count=300').then(function(d){if(!Array.isArray(d))return;var el=$('lo');if(!el)return;var atB=el.scrollHeight-el.scrollTop-el.clientHeight<50;
+    el.innerHTML=d.map(function(l){var t=l.text||'';var col=t.indexOf('ERROR')>=0?'#cc2e2e':t.indexOf('[KILL]')>=0?'#ffd666':t.indexOf('[SPAWN]')>=0?'#c9a44a':t.indexOf('[SAVE]')>=0?'#4488ff':'#6b5a3a';
+      return '<div style="color:'+col+'"><span style="color:#3d2e1e;margin-right:8px">'+(l.time||'')+'</span>'+t.replace(/</g,'&lt;')+'</div>'}).join('');if(atB)el.scrollTop=el.scrollHeight})}
+  rl();if(logInt)clearInterval(logInt);logInt=setInterval(rl,2000);
+}
+
+/* ═══ MESSAGING ═══ */
+function rMsg(){
+  F('/api/online').then(function(d){
+    var h='<div class="fx mb"><img src="/images/Fire_Cone_on.png" class="ico" onerror="this.style.display=\'none\'"> <span style="font:900 20px Cinzel,serif;color:#c9a44a">Messaging</span></div>';
+    h+='<div class="card"><div class="ct">Broadcast to All Players</div>';
+    h+='<div style="margin-bottom:8px"><textarea id="bc-msg" rows="3" style="width:100%;background:#1a1612;border:1px solid #3d2e1e;color:#d4c4a0;padding:8px;border-radius:4px;font:13px Inter,sans-serif;resize:vertical" placeholder="Type your announcement..."></textarea></div>';
+    h+='<div class="fx" style="gap:8px;flex-wrap:wrap"><select id="bc-color" style="width:140px"><option value="#FF4444">Red</option><option value="#FFD666">Gold</option><option value="#2ecc40">Green</option><option value="#4488ff">Blue</option><option value="#FF66CC">Pink</option><option value="#99FFFF">Cyan</option><option value="#FF6600">Orange</option><option value="#FFFFFF">White</option></select>';
+    h+='<select id="bc-effect" style="width:120px"><option value="glow">Glow</option><option value="">None</option></select>';
+    h+='<button class="btn btn-gold" onclick="doBroadcast()">&#128227; Broadcast</button>';
+    h+='<span class="tg" id="bc-status"></span></div></div>';
+    h+='<div class="card"><div class="ct">Whisper to Player</div>';
+    h+='<div class="fx" style="gap:8px;margin-bottom:8px"><select id="wh-player" style="width:250px"><option value="">-- Select Player --</option>';
+    (d.players||[]).forEach(function(p){h+='<option value="'+p.account_name+'">'+p.name+' ('+p.account_name+')</option>'});
+    h+='</select></div>';
+    h+='<div style="margin-bottom:8px"><textarea id="wh-msg" rows="2" style="width:100%;background:#1a1612;border:1px solid #3d2e1e;color:#d4c4a0;padding:8px;border-radius:4px;font:13px Inter,sans-serif;resize:vertical" placeholder="Private message..."></textarea></div>';
+    h+='<button class="btn btn-amber" onclick="doWhisper()">&#128172; Send Whisper</button> <span class="tg" id="wh-status"></span></div>';
+    h+='<div class="tg mt">'+((d.players||[]).length)+' players online</div>';
+    $('C').innerHTML=h;
+  });
+}
+function doBroadcast(){var msg=$('bc-msg').value;if(!msg)return;
+  F('/api/command',{method:'POST',body:JSON.stringify({command:'broadcast',message:msg,color:$('bc-color').value,effect:$('bc-effect').value})}).then(function(r){
+    $('bc-status').textContent=r.ok?'Sent! '+r.result:'Failed: '+(r.error||'');$('bc-status').style.color=r.ok?'#2ecc40':'#cc2e2e';if(r.ok)$('bc-msg').value='';toast(r.ok?'Broadcast sent':'Failed',r.ok?'green':'red');})}
+function doWhisper(){var p=$('wh-player').value,msg=$('wh-msg').value;if(!p||!msg)return;
+  F('/api/command',{method:'POST',body:JSON.stringify({command:'whisper',player:p,message:msg})}).then(function(r){
+    $('wh-status').textContent=r.ok?'Sent!':'Failed: '+(r.error||r.result||'');$('wh-status').style.color=r.ok?'#2ecc40':'#cc2e2e';if(r.ok)$('wh-msg').value='';toast(r.ok?'Whisper sent':'Failed',r.ok?'green':'red');})}
+
+/* ═══ MODERATION ═══ */
+function rMod(){
+  F('/api/online').then(function(d){
+    var h='<div class="fx mb"><img src="/images/slow_on.png" class="ico" onerror="this.style.display=\'none\'"> <span style="font:900 20px Cinzel,serif;color:#c9a44a">Moderation</span></div>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">';
+    // Kick
+    h+='<div class="card"><div class="ct">Kick Player</div>';
+    h+='<select id="kick-player" style="width:100%;margin-bottom:8px"><option value="">-- Select --</option>';
+    (d.players||[]).forEach(function(p){h+='<option value="'+p.account_name+'">'+p.name+' ('+p.account_name+')</option>'});
+    h+='</select><input id="kick-reason" placeholder="Reason (optional)" style="width:100%;margin-bottom:8px">';
+    h+='<button class="btn btn-red" onclick="doKick()">&#9888; Kick</button></div>';
+    // Ban
+    h+='<div class="card"><div class="ct">Ban Player</div>';
+    h+='<input id="ban-player" placeholder="Username" style="width:100%;margin-bottom:8px">';
+    h+='<input id="ban-reason" placeholder="Reason" style="width:100%;margin-bottom:8px">';
+    h+='<button class="btn btn-red" onclick="doBan()">&#128683; Ban</button> <button class="btn btn-green" onclick="doUnban()">&#9989; Unban</button></div>';
+    // Teleport
+    h+='<div class="card"><div class="ct">Teleport Player</div>';
+    h+='<select id="tp-player" style="width:100%;margin-bottom:8px"><option value="">-- Select --</option>';
+    (d.players||[]).forEach(function(p){h+='<option value="'+p.account_name+'">'+p.name+' ('+p.account_name+')</option>'});
+    h+='</select><input id="tp-zone" placeholder="Zone name (e.g. tutorial)" style="width:100%;margin-bottom:8px" list="zone-list">';
+    h+='<datalist id="zone-list"><option value="tutorial"><option value="dungeon01_level01"><option value="dungeon02_level01"><option value="dungeon03_level01"><option value="TheHub"><option value="pvp_start"><option value="PVPGroupDuelMatch"></datalist>';
+    h+='<button class="btn btn-amber" onclick="doTeleport()">&#127759; Teleport</button></div>';
+    h+='</div>';
+    // Ban history
+    h+='<div class="card mt"><div class="ct">Ban History</div><div id="ban-hist">Loading...</div></div>';
+    $('C').innerHTML=h;
+    F('/api/bans').then(function(b){
+      var bh='';if(!b.rows||!b.rows.length)bh='<div style="color:#6b5a3a;padding:12px">No ban records</div>';
+      else{bh='<table><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Reason</th><th>Admin</th></tr></thead><tbody>';
+        b.rows.forEach(function(r){bh+='<tr><td class="mono" style="font-size:11px;color:#6b5a3a">'+(r.timestamp||'')+'</td><td style="color:#c9a44a">'+r.username+'</td><td>'+B(r.action,r.action==='ban'?'#3d0e0e':'#0e3d1a',r.action==='ban'?'#cc2e2e':'#2ecc40')+'</td><td style="font-size:12px">'+(r.reason||'')+'</td><td style="font-size:12px">'+(r.admin||'')+'</td></tr>'});
+        bh+='</tbody></table>';}
+      var el=document.getElementById('ban-hist');if(el)el.innerHTML=bh;
+    });
+  });
+}
+function doKick(){var p=$('kick-player').value;if(!p){toast('Select a player','red');return}
+  if(!confirm('Kick '+p+'?'))return;
+  F('/api/command',{method:'POST',body:JSON.stringify({command:'kick',player:p,reason:$('kick-reason').value||'Kicked by admin'})}).then(function(r){toast(r.ok?'Kicked: '+r.result:'Failed: '+(r.error||r.result),r.ok?'green':'red');if(r.ok)setTimeout(rMod,1000)})}
+function doBan(){var p=$('ban-player').value;if(!p){toast('Enter username','red');return}
+  if(!confirm('BAN '+p+'? This will also kick them if online.'))return;
+  F('/api/command',{method:'POST',body:JSON.stringify({command:'ban',player:p,reason:$('ban-reason').value||'Banned by admin'})}).then(function(r){toast(r.ok?'Banned: '+r.result:'Failed: '+(r.error||r.result),r.ok?'green':'red');if(r.ok)rMod()})}
+function doUnban(){var p=$('ban-player').value;if(!p){toast('Enter username','red');return}
+  F('/api/command',{method:'POST',body:JSON.stringify({command:'unban',player:p})}).then(function(r){toast(r.ok?'Unbanned':'Failed: '+(r.error||r.result),r.ok?'green':'red');if(r.ok)rMod()})}
+function doTeleport(){var p=$('tp-player').value,z=$('tp-zone').value;if(!p||!z){toast('Select player and zone','red');return}
+  F('/api/command',{method:'POST',body:JSON.stringify({command:'teleport',player:p,zone:z})}).then(function(r){toast(r.ok?'Teleported: '+r.result:'Failed: '+(r.error||r.result),r.ok?'green':'red')})}
+
+/* ═══ EVENTS ═══ */
+function rEv(){
+  Promise.all([F('/api/boosts'),F('/api/scheduled-announces')]).then(function(arr){
+    var bs=arr[0],sa=arr[1];
+    var h='<div class="fx mb"><img src="/images/unstoppable_on.png" class="ico" onerror="this.style.display=\'none\'"> <span style="font:900 20px Cinzel,serif;color:#c9a44a">Events & Boosts</span></div>';
+    // Current boost status
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">';
+    h+='<div class="card stat-card"><div class="ct">XP Boost</div><div style="font:800 20px Courier New,monospace;color:#ffd666">'+(bs.xp_boost||'inactive')+'</div></div>';
+    h+='<div class="card stat-card"><div class="ct">Gold Boost</div><div style="font:800 20px Courier New,monospace;color:#ffd666">'+(bs.gold_boost||'inactive')+'</div></div>';
+    h+='<div class="card stat-card"><div class="ct">Maintenance</div><div style="font:800 20px Courier New,monospace;color:'+(bs.maintenance==='maintenance ON'?'#cc2e2e':'#2ecc40')+'">'+(bs.maintenance||'off')+'</div></div></div>';
+    // Boost controls
+    h+='<div class="card mt" style="text-align:center;padding:30px">';
+    h+='<div style="font:700 18px Cinzel,serif;color:#6b5a3a;margin-bottom:8px">XP/Gold Boosts & Maintenance Mode</div>';
+    h+='<div class="tg">Not yet implemented. Check the in-game @commands for manual boosts. Scheduled announcements coming soon.</div>';
+    h+='</div>';
+    $('C').innerHTML=h;
+  });
+}
+function doBoost(){toast('Boosts and maintenance mode not yet implemented','red')}
+function stopBoost(){toast('Boosts not yet implemented','red')}
+function doMaint(){toast('Maintenance mode not yet implemented','red')}
+function addSA(){var m=$('sa-msg').value;if(!m)return;
+  F('/api/scheduled-announces',{method:'POST',body:JSON.stringify({message:m,color:$('sa-color').value,interval_minutes:$('sa-int').value})}).then(function(r){toast(r.ok?'Added':'Failed',r.ok?'green':'red');if(r.ok){$('sa-msg').value='';rEv()}})}
+function toggleSA(id,v){F('/api/scheduled-announces/'+id,{method:'PUT',body:JSON.stringify({enabled:v})}).then(function(){rEv()})}
+function delSA(id){if(!confirm('Delete this announcement?'))return;F('/api/scheduled-announces/'+id,{method:'DELETE'}).then(function(){rEv()})}
+
+/* ═══ CHAT LOG ═══ */
+var clInt=null,clSearch='';
+function rCl(){
+  var h='<div class="fx mb"><span style="font:900 20px Cinzel,serif;color:#c9a44a">Chat Log</span><div class="gr"></div>';
+  h+='<input placeholder="Search chat..." value="'+clSearch+'" onchange="clSearch=this.value;loadCl()" style="width:200px"></div>';
+  h+='<div id="chat-box" class="card" style="padding:0;height:calc(100vh - 140px);overflow-y:auto;background:#0a0908"><div id="chat-inner" style="padding:12px;font:12px/1.8 Courier New,monospace">Loading...</div></div>';
+  $('C').innerHTML=h;loadCl();
+  if(clInt)clearInterval(clInt);clInt=setInterval(loadCl,3000);
+}
+function loadCl(){F('/api/chatlog?count=300'+(clSearch?'&search='+encodeURIComponent(clSearch):'')).then(function(d){
+  var el=document.getElementById('chat-inner');if(!el)return;var box=document.getElementById('chat-box');
+  var atB=box.scrollHeight-box.scrollTop-box.clientHeight<50;
+  el.innerHTML=(d.rows||[]).map(function(r){
+    var col=r.channel==='world'?'#4488ff':r.channel==='group'?'#2ecc40':r.channel==='whisper'?'#FF66CC':'#d4c4a0';
+    return '<div><span style="color:#3d2e1e;margin-right:6px">'+(r.timestamp||'').substring(11,19)+'</span><span style="color:#c9a44a;font-weight:700">['+r.sender+']</span> <span style="color:'+col+'">'+r.message.replace(/</g,'&lt;')+'</span></div>'}).join('');
+  if(atB&&box)box.scrollTop=box.scrollHeight;
+})}
+
+/* ═══ ACTIVITY LOG ═══ */
+function rAl(){
+  var h='<div class="fx mb"><span style="font:900 20px Cinzel,serif;color:#c9a44a">Activity Log</span><div class="gr"></div>';
+  h+='<select id="al-filter" onchange="loadAl()" style="width:140px"><option value="">All Events</option><option value="login">Login</option><option value="logout">Logout</option><option value="kick">Kick</option><option value="ban">Ban</option><option value="broadcast">Broadcast</option><option value="whisper">Whisper</option><option value="teleport">Teleport</option><option value="boost_xp">XP Boost</option><option value="boost_gold">Gold Boost</option><option value="maintenance">Maintenance</option></select></div>';
+  h+='<div id="al-body" class="card" style="padding:0;overflow-x:auto">Loading...</div>';
+  $('C').innerHTML=h;loadAl();
+}
+function loadAl(){var filter=$('al-filter')?$('al-filter').value:'';
+  F('/api/activity?count=200'+(filter?'&type='+filter:'')).then(function(d){
+    var el=document.getElementById('al-body');if(!el)return;
+    var evCol={login:'#2ecc40',logout:'#6b5a3a',kick:'#cc2e2e',ban:'#cc2e2e',unban:'#2ecc40',broadcast:'#4488ff',whisper:'#FF66CC',teleport:'#ffd666',boost_xp:'#ffd666',boost_gold:'#ffd666',maintenance:'#FF6600'};
+    var h='<table><thead><tr><th>Time</th><th>Event</th><th>Player</th><th>Details</th><th>Admin</th></tr></thead><tbody>';
+    (d.rows||[]).forEach(function(r){var ec=evCol[r.event_type]||'#8b7340';
+      h+='<tr><td class="mono" style="font-size:11px;color:#6b5a3a">'+(r.timestamp||'')+'</td><td>'+B(r.event_type,ec+'22',ec)+'</td><td style="color:#c9a44a">'+(r.player||'')+'</td><td style="font-size:12px">'+(r.details||'')+'</td><td style="font-size:12px;color:#6b5a3a">'+(r.admin||'')+'</td></tr>'});
+    if(!(d.rows||[]).length)h+='<tr><td colspan="5" style="text-align:center;padding:30px;color:#6b5a3a">No activity recorded yet</td></tr>';
+    h+='</tbody></table>';el.innerHTML=h;
+  })}
+
+/* ═══ PVP LEADERBOARD ═══ */
+function rLb(){
+  var h='<div class="fx mb"><img src="/images/Cavalry_Helm_icon.png" class="ico" onerror="this.style.display=\'none\'"> <span style="font:900 20px Cinzel,serif;color:#c9a44a">PvP Leaderboard</span><div class="gr"></div>';
+  h+='<select id="lb-sort" onchange="loadLb()" style="width:140px"><option value="pvp_rating">Rating</option><option value="pvp_wins">Wins</option><option value="level">Level</option><option value="gold">Gold</option></select></div>';
+  h+='<div id="lb-body" class="card" style="padding:0;overflow-x:auto">Loading...</div>';
+  $('C').innerHTML=h;loadLb();
+}
+function loadLb(){var sort=$('lb-sort')?$('lb-sort').value:'pvp_rating';
+  F('/api/leaderboard?sort='+sort+'&limit=50').then(function(d){
+    var el=document.getElementById('lb-body');if(!el)return;
+    var h='<table><thead><tr><th>#</th><th></th><th>Name</th><th>Class</th><th>Level</th><th>PvP Rating</th><th>PvP Wins</th><th>Gold</th><th>Account</th></tr></thead><tbody>';
+    (d.rows||[]).forEach(function(r,i){var cc=classColor(r.class_name);
+      var medal=i===0?'&#129351;':i===1?'&#129352;':i===2?'&#129353;':(i+1);
+      h+='<tr'+(i<3?' style="background:#1a161288"':'')+'><td style="font:800 16px Courier New,monospace;color:'+(i<3?'#ffd666':'#6b5a3a')+'">'+medal+'</td><td>'+classImg(r.class_name,'ico-sm')+'</td><td style="color:#c9a44a;font-weight:700">'+r.name+'</td><td>'+B(r.class_name,cc+'22',cc)+'</td><td style="font:700 14px Courier New,monospace;color:#ffd666">'+r.level+'</td><td style="font:800 16px Courier New,monospace;color:#a78bfa">'+(r.pvp_rating||0)+'</td><td style="font:700 14px Courier New,monospace;color:#2ecc40">'+(r.pvp_wins||0)+'</td><td style="color:#ffd666">'+(r.gold||0).toLocaleString()+'</td><td style="font-size:12px;color:#6b5a3a">'+r.account_name+'</td></tr>'});
+    if(!(d.rows||[]).length)h+='<tr><td colspan="9" style="text-align:center;padding:30px;color:#6b5a3a">No characters found</td></tr>';
+    h+='</tbody></table>';el.innerHTML=h;
+  })}
+
+/* ═══ INIT ═══ */
+F('/api/me').then(function(s){if(s.error){location.href='/login';return}
+  $('ul').textContent='Logged in as '+s.username;R();
+  setInterval(function(){if(viewingDetail)return;if(tab==='ov')R();if(tab==='cn')rN();if(tab==='on')rOn()},5000);
+}).catch(function(){location.href='/login'});
+</script>
+</body></html>

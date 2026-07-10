@@ -1,0 +1,29 @@
+# DR Python server — static configuration (ServerConfig).
+# Copy to config.yaml and edit. Dynamic gameplay tunables go in server.cfg /
+# the server_settings DB table instead (see ServerSettings).
+
+auth_server_ip: "0.0.0.0"
+auth_server_port: 2110
+
+game_server_ip: "0.0.0.0"
+game_server_port: 2603
+game_server_name: "Dungeon Runners Server"
+
+# Auth encryption keys (extracted from DungeonRunners.exe). Do not change unless
+# you know the client expects different keys.
+blowfish_key: "[;'.]94-31==-%&@!^+]"
+des_key: "TEST"
+
+max_players: 100
+server_version: "1.0.0"
+enable_debug_logging: true
+
+default_world_id: 1
+default_spawn_position: [100.0, 0.0, 100.0]
+default_zone_id: 1
+
+# Paths (relative to the working directory). Point database_path at the SQLite db
+# shipped with the C# build: DR_Server/DR_Server/Build/Database/dungeon_runners.db
+database_path: "Database/dungeon_runners.db"
+gc_data_dir: "Database/gc"
+pathmap_dir: "Database/PathMaps"

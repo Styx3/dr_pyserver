@@ -1,0 +1,10 @@
+; d3d9.dll proxy export table.
+;
+; DungeonRunners.exe imports exactly one symbol from d3d9.dll: Direct3DCreate9.
+; We export our own wrapper of it (d3d9_proxy.c) under the undecorated name the
+; game expects; the wrapper lazily forwards to the real System32 d3d9.dll. The
+; bare name + --enable-stdcall-fixup at link time maps the C stdcall symbol
+; (_Direct3DCreate9@4) to the undecorated export.
+LIBRARY d3d9
+EXPORTS
+    Direct3DCreate9 @1

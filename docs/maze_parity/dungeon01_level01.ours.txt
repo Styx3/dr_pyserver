@@ -1,0 +1,67 @@
+# maze dump: dungeon01_level01
+seed=0x1D77A96E
+params=5x5 rand=100 sparse=5 deadend=100 prefix=cave_small_tileset_
+placed=11/13 room nodes
+# src kind tile grid origin link
+  src= 0 kind=mainentrance  tile=cave_small_hub_1n              grid=(3,1) origin=(400,-400) link=town
+  src= 1 kind=exit          tile=dungeon_one_cave_small_tracks_down_1w grid=(1,0) origin=(-400,-800) link=dungeon01_level02
+  src= 2 kind=oneoff1       tile=dungeon_one_one_oneoff_entrance_1e grid=(1,1) origin=(-400,-400) link=dungeon01_level01_off1a
+  src= 3 kind=roomnode      tile=dungeon_one_one_quest_1n1s1w_a grid=(1,3) origin=(-400,400) link=
+  src= 5 kind=roomnode      tile=level_one_cave_small_squeakeasy_entrance_1s_a grid=(3,3) origin=(400,400) link=
+  src= 6 kind=roomnode      tile=cave_small_deadend_1n_a        grid=(2,2) origin=(0,0) link=
+  src= 7 kind=roomnode      tile=dungeon_one_fizz_rock_deadend_1w_a grid=(0,4) origin=(-800,800) link=
+  src= 8 kind=roomnode      tile=dungeon_one_fizz_rock_corner_1n1e_a grid=(1,4) origin=(-400,800) link=
+  src= 9 kind=roomnode      tile=dungeon_one_fizz_rock_corner_1n1e_a grid=(4,4) origin=(800,800) link=
+  src=10 kind=roomnode      tile=cave_small_corner_1e1s_a       grid=(1,2) origin=(-400,0) link=
+  src=12 kind=roomnode      tile=cave_small_shrine_1n1s1w       grid=(0,2) origin=(-800,0) link=
+  src= 4 kind=roomnode      tile_set=dungeon_one_one_questgate_     NOT PLACED (grid=0,2 chance=100)
+  src=11 kind=roomnode      tile_set=cave_small_corner_             NOT PLACED (grid=None,None chance=25)
+
+# MazeGenerator grid dump v1
+seed=0x1D77A96E
+width=5
+height=5
+randomness=100
+sparseness=5
+deadEndRemoval=100
+tileSize=400
+placedRoomNodes=11
+  ROOMNODE idx=0 src=0 tileSet='cave_small_hub_' tileType='cave_small_hub_1n' grid=(3,1)
+  ROOMNODE idx=1 src=1 tileSet='dungeon_one_cave_small_tracks_down_' tileType='dungeon_one_cave_small_tracks_down_1w' grid=(1,0)
+  ROOMNODE idx=2 src=2 tileSet='dungeon_one_one_oneoff_entrance_' tileType='dungeon_one_one_oneoff_entrance_1e' grid=(1,1)
+  ROOMNODE idx=3 src=3 tileSet='dungeon_one_one_quest_' tileType='dungeon_one_one_quest_1n1s1w_a' grid=(1,3)
+  ROOMNODE idx=4 src=5 tileSet='level_one_cave_small_squeakeasy_entrance_' tileType='level_one_cave_small_squeakeasy_entrance_1s_a' grid=(3,3)
+  ROOMNODE idx=5 src=6 tileSet='cave_small_deadend_' tileType='cave_small_deadend_1n_a' grid=(2,2)
+  ROOMNODE idx=6 src=7 tileSet='dungeon_one_fizz_rock_deadend_' tileType='dungeon_one_fizz_rock_deadend_1w_a' grid=(0,4)
+  ROOMNODE idx=7 src=8 tileSet='dungeon_one_fizz_rock_corner_' tileType='dungeon_one_fizz_rock_corner_1n1e_a' grid=(1,4)
+  ROOMNODE idx=8 src=9 tileSet='dungeon_one_fizz_rock_corner_' tileType='dungeon_one_fizz_rock_corner_1n1e_a' grid=(4,4)
+  ROOMNODE idx=9 src=10 tileSet='cave_small_corner_' tileType='cave_small_corner_1e1s_a' grid=(1,2)
+  ROOMNODE idx=10 src=12 tileSet='cave_small_shrine_' tileType='cave_small_shrine_1n1s1w' grid=(0,2)
+# cells: x y room dirs tileType
+CELL x=0 y=0 room=0 dirs=- raw=0x00 tile=''
+CELL x=1 y=0 room=1 dirs=E raw=0x04 tile='dungeon_one_cave_small_tracks_down_1w'
+CELL x=2 y=0 room=0 dirs=ESW raw=0x0E tile=''
+CELL x=3 y=0 room=0 dirs=ESW raw=0x0E tile=''
+CELL x=4 y=0 room=0 dirs=SW raw=0x0A tile=''
+CELL x=0 y=1 room=0 dirs=ES raw=0x06 tile=''
+CELL x=1 y=1 room=1 dirs=W raw=0x08 tile='dungeon_one_one_oneoff_entrance_1e'
+CELL x=2 y=1 room=0 dirs=NS raw=0x03 tile=''
+CELL x=3 y=1 room=1 dirs=N raw=0x01 tile='cave_small_hub_1n'
+CELL x=4 y=1 room=0 dirs=NS raw=0x03 tile=''
+CELL x=0 y=2 room=1 dirs=NES raw=0x07 tile='cave_small_shrine_1n1s1w'
+CELL x=1 y=2 room=1 dirs=SW raw=0x0A tile='cave_small_corner_1e1s_a'
+CELL x=2 y=2 room=1 dirs=N raw=0x01 tile='cave_small_deadend_1n_a'
+CELL x=3 y=2 room=0 dirs=- raw=0x00 tile=''
+CELL x=4 y=2 room=0 dirs=NS raw=0x03 tile=''
+CELL x=0 y=3 room=0 dirs=N raw=0x01 tile=''
+CELL x=1 y=3 room=1 dirs=NES raw=0x07 tile='dungeon_one_one_quest_1n1s1w_a'
+CELL x=2 y=3 room=0 dirs=SW raw=0x0A tile=''
+CELL x=3 y=3 room=1 dirs=S raw=0x02 tile='level_one_cave_small_squeakeasy_entrance_1s_a'
+CELL x=4 y=3 room=0 dirs=NS raw=0x03 tile=''
+CELL x=0 y=4 room=1 dirs=E raw=0x04 tile='dungeon_one_fizz_rock_deadend_1w_a'
+CELL x=1 y=4 room=1 dirs=NW raw=0x09 tile='dungeon_one_fizz_rock_corner_1n1e_a'
+CELL x=2 y=4 room=0 dirs=NE raw=0x05 tile=''
+CELL x=3 y=4 room=0 dirs=NEW raw=0x0D tile=''
+CELL x=4 y=4 room=1 dirs=NW raw=0x09 tile='dungeon_one_fizz_rock_corner_1n1e_a'
+# end
+

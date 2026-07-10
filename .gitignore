@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtualenv
+.venv/
+venv/
+env/
+
+# Local runtime config (copy config.example.yaml -> config.yaml)
+config.yaml
+server.cfg
+
+# Runtime data / logs
+*.log
+*.db-wal
+*.db-shm
+
+# Claude Code / agent harness artifacts
+.claude/
+.omo/
+.claude-*/
+CLAUDE.local.md
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Content database (120 MB+ SQLite + backups). NOT shipped — provide it
+# separately or rebuild via scripts/restore_database.py (see README §4).
+Database/
+*.db
+*.db.bak-*
+*.rebuilt.db
+*.sqlite
+*.sqlite3
+
+# Compiled binaries / build artifacts (client_hook DLLs, patched-exe backups)
+*.dll
+*.exe
+*.so
+*.pyd
+*.o
+*.obj
+*.orig-presynchpatch
+
+# Excluded from the public upload (per repo owner)
+CLAUDE.md
+run_ghidra.sh
+drserver/admin/images/
+
+# Broken pre-upload git dir, renamed aside and kept out of the fresh repo
+.git-broken-backup/
