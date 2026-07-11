@@ -33,14 +33,19 @@ CLAUDE.local.md
 .vscode/
 *.swp
 
-# Content database (120 MB+ SQLite + backups). NOT shipped — provide it
-# separately or rebuild via scripts/restore_database.py (see README §4).
+# Content database (120 MB+ SQLite + backups). NOT shipped — build it from the
+# extracter with scripts/build_database.py (see docs/DATABASE.md).
 Database/
 *.db
 *.db.bak-*
 *.rebuilt.db
 *.sqlite
 *.sqlite3
+
+# Item-content seed: game data the extracter can't reproduce (numbered-PAL items),
+# exported by scripts/export_item_seed.py and shipped as a release asset.
+scripts/seed/
+*.sql.gz
 
 # Compiled binaries / build artifacts (client_hook DLLs, patched-exe backups)
 *.dll

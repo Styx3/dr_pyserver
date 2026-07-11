@@ -54,6 +54,19 @@ CLASS_FILE_TO_DB: Dict[str, str] = {
 _EXTENDS_RE = re.compile(r"^\*\s+extends\s+(\S+)")
 _ID_RE = re.compile(r"^ID\s*=\s*(\d+)\s*;")
 
+# Top-level starting skills in ``<Class>StartingSkills.gc`` are the
+# ``* extends skills.generic.X`` entries (the ``skills.professions.*`` line is the
+# profession, not a granted skill).
+_STARTING_SKILL_RE = re.compile(r"^\s*\*\s+extends\s+(skills\.generic\.\S+)", re.MULTILINE)
+
+# One-line class flavor. The client ``*Base.gc`` ``Description`` block only carries
+# the display ``Name`` (e.g. "Fighter"); the blurb below is the shipped class text.
+CLASS_DESCRIPTIONS: Dict[str, str] = {
+    "Fighter": "Melee combat specialist",
+    "Mage": "Ranged magic specialist",
+    "Ranger": "Ranged physical specialist",
+}
+
 
 def parse_starting_equipment(text: str) -> Dict[int, str]:
     """Parse one ``*StartingEquipment.gc`` body into ``{slot_id: gc_key_lower}``.
@@ -135,3 +148,36 @@ def import_class_equipment(conn: sqlite3.Connection, classes_dir: str) -> int:
         )
         updated += cur.rowcount
     return updated
+
+
+def parse_starting_skills(text: str) -> list[str]:
+    """Return the ``skills.generic.*`` gc_types a class starts with (original case)."""
+    return _STARTING_SKILL_RE.findall(text)
+
+
+def rebuild_class_tables(conn: sqlite3.Connection, classes_dir: str) -> int:
+    """From-zero seed of ``class_definitions`` (base rows + gear) and
+    ``class_starting_skills``, from ``extracter/avatar/classes``.
+
+    ``import_class_equipment`` only UPDATEs existing ``class_definitions`` rows, so
+    a from-empty build must insert the base rows first. Returns the class count.
+    """
+    conn.execute("DELETE FROM class_definitions")
+    conn.execute("DELETE FROM class_starting_skills")
+    for stem, class_name in CLASS_FILE_TO_DB.items():
+        conn.execute(
+            "INSERT INTO class_definitions (class_name, display_name, description)"
+            " VALUES (?,?,?)",
+            (class_name, class_name, CLASS_DESCRIPTIONS.get(class_name, "")),
+        )
+        skills_path = os.path.join(classes_dir, f"{stem}StartingSkills.gc")
+        if os.path.isfile(skills_path):
+            with open(skills_path, encoding="latin-1") as fh:
+                for gc in parse_starting_skills(fh.read()):
+                    conn.execute(
+                        "INSERT INTO class_starting_skills (class_name, skill_gc_type)"
+                        " VALUES (?,?)",
+                        (class_name, gc),
+                    )
+    import_class_equipment(conn, classes_dir)  # fills the gear columns
+    return conn.execute("SELECT COUNT(*) FROM class_definitions").fetchone()[0]

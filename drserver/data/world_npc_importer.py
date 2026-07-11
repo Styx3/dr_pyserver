@@ -62,6 +62,16 @@ HUB_WORLDS: dict[str, str] = {
     "PVP_hub.world": "pvp_hub",
 }
 
+# The public non-hub worlds whose NPCs the C# DB shipped pre-placed. For a
+# from-zero build these must come from the same authored ``.world`` placements
+# (24 + 8 + 4 = 36 rows, matching the live table). Import stays add-only, so a DB
+# that already has the curated town/tutorial/pvp rows keeps them untouched.
+PUBLIC_WORLDS: dict[str, str] = {
+    "town.world": "town",
+    "Tutorial.world": "tutorial",
+    "pvp_start.world": "pvp_start",
+}
+
 # Hub vendor ``.gc`` files (relative to the extracter root) that carry a
 # ``Merchant`` block but live OUTSIDE the ``world/<zone>/npc/`` tree the standard
 # merchant discovery scans (their gc type also lacks the ``.npc.`` segment), so
@@ -142,15 +152,17 @@ def parse_world_npc_placements(world_path: str, zone_type: str) -> List[NPCPlace
 
 
 def collect_new_npcs(extracter_root: str) -> List[NPCPlacement]:
-    """Authored hub NPC placements (``thehub`` + ``pvp_hub``). Town is left as the
-    client/C# ship it — no fabricated catalog rows."""
+    """Authored NPC placements for the hubs (``thehub``/``pvp_hub``) and the public
+    ``town``/``tutorial``/``pvp_start`` worlds — every placement the client ships,
+    from real ``.world`` coordinates (never fabricated). Add-only downstream, so
+    curated existing rows are preserved."""
     out: List[NPCPlacement] = []
-    for world_file, zone_type in HUB_WORLDS.items():
+    for world_file, zone_type in {**HUB_WORLDS, **PUBLIC_WORLDS}.items():
         path = os.path.join(extracter_root, world_file)
         if os.path.isfile(path):
             out.extend(parse_world_npc_placements(path, zone_type))
         else:
-            log.warn(f"[world_npc] missing hub world: {path}")
+            log.warn(f"[world_npc] missing world: {path}")
     return out
 
 

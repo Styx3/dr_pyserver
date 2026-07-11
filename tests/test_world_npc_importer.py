@@ -111,17 +111,22 @@ def test_portal_sub_hubs_author_no_npcs():
 
 
 @_needs_extracter
-def test_collect_new_npcs_is_hubs_only():
+def test_collect_new_npcs_covers_hubs_and_public_worlds():
     # Act
     collected = collect_new_npcs(EXTRACTER)
 
-    # Assert — only authored hub NPCs; town is left as the client/C# ship it.
+    # Assert — every authored placement from the hub AND public (town/tutorial/pvp)
+    # worlds, from real .world coordinates. (Town/tutorial/pvp were previously left
+    # to the shipped C# DB; a from-zero build sources them from the same placements.)
     by_zone = {}
     for p in collected:
         by_zone.setdefault(p.zone_type, []).append(p)
-    assert set(by_zone) == {"thehub", "pvp_hub"}
+    assert set(by_zone) == {"thehub", "pvp_hub", "town", "tutorial", "pvp_start"}
     assert len(by_zone["thehub"]) == 4
     assert len(by_zone["pvp_hub"]) == 1
+    assert len(by_zone["town"]) == 24
+    assert len(by_zone["tutorial"]) == 8
+    assert len(by_zone["pvp_start"]) == 4
 
 
 # ── DB import (add-only / idempotent) on a throwaway copy ──────────────────

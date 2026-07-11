@@ -125,3 +125,32 @@ def augment_zones_table(conn: sqlite3.Connection, extracter_root: str) -> int:
         conn.execute(f"UPDATE zones SET {set_clause} WHERE id = :id", params)
         updated += 1
     return updated
+
+
+def rebuild_zones_table(conn: sqlite3.Connection, extracter_root: str) -> int:
+    """Seed the base ``zones`` rows from every client ``*.zone`` file, then fill
+    the augmented columns via :func:`augment_zones_table`. For a from-zero build
+    (``augment_zones_table`` only UPDATEs rows that already exist).
+
+    Base columns are the ones the client ``*.zone`` expresses directly: ``name``
+    (``Name``), ``gc_type`` (the zone's world GCObject type, ``world.<lower name>``
+    — verified against every live row) and ``respawn_zone`` (``RespawnZone``).
+    ``spawn_x/y/z`` stay 0: the client names a ``RespawnSpawnPoint`` the engine
+    resolves to geometry at runtime rather than shipping numeric coords. Returns
+    the number of base rows inserted.
+    """
+    conn.execute("DELETE FROM zones")
+    zid = 1
+    for fp in sorted(glob.glob(os.path.join(extracter_root, "*.zone"))):
+        with open(fp, encoding="latin-1") as fh:
+            raw = parse_zone_file(fh.read())
+        name = raw.get("Name")
+        if not name:
+            continue
+        conn.execute(
+            "INSERT INTO zones (id, name, gc_type, respawn_zone) VALUES (?,?,?,?)",
+            (zid, name, "world." + name.lower(), (raw.get("RespawnZone") or "").lower()),
+        )
+        zid += 1
+    augment_zones_table(conn, extracter_root)
+    return zid - 1
